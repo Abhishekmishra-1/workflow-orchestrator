@@ -1,0 +1,52 @@
+# Production profile configuration
+# ALL sensitive values MUST be provided via environment variables
+# DO NOT commit any secrets or passwords to version control
+
+server:
+  port: ${SERVER_PORT:8082}
+
+spring:
+  datasource:
+    # Production database connection - REQUIRED environment variables
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX:20}
+      minimum-idle: ${DB_POOL_MIN_IDLE:5}
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      # Validate schema in production - never auto-update
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: false
+    out-of-order: false
+    validate-on-migrate: true
+
+# Production logging
+logging:
+  level:
+    root: WARN
+    com.workflow.userservice: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: ${LOG_FILE_PATH:/var/log/user-service/application.log}
+    max-size: 10MB
+    max-history: 30
+

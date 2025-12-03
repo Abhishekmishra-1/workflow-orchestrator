@@ -1,0 +1,13 @@
+# Base configuration - minimal global settings
+spring:
+  application:
+    name: user-service
+
+server:
+  port: 8082
+
+logging:
+  level:
+    root: INFO
+    com.workflow.userservice: DEBUG
+
