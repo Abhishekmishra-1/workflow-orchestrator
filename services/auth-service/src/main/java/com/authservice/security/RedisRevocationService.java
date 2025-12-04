@@ -28,7 +28,7 @@ public class RedisRevocationService {
     public void revokeTokenJti(String jti, long expiryEpochMillis) {
         String key = REVOKED_KEY_PREFIX + jti;
         long now = Instant.now().toEpochMilli();
-        long ttlSeconds = Math.max(1, (expiryEpochMillis - now) / 1000);
+        long ttlSeconds = Math.max(1, (expiryEpochMillis - now - 5000) / 1000);
         
         redisTemplate.opsForValue().set(key, "revoked", Duration.ofSeconds(ttlSeconds));
     }

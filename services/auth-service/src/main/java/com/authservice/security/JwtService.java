@@ -6,6 +6,8 @@ import com.authservice.entity.User;
 import com.authservice.repository.RefreshTokenRepository;
 import com.authservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -26,6 +28,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class JwtService {
+
+    private static final Logger log = LoggerFactory.getLogger(JwtService.class);
 
     private final JwtEncoder jwtEncoder;
     private final JwtDecoder jwtDecoder;
@@ -82,6 +86,8 @@ public class JwtService {
                 .build();
 
         refreshTokenRepository.save(refreshToken);
+
+        log.info("Issued tokens for user={} jti={} refreshHashPrefix={}", user.getId(), jti, refreshTokenHash.substring(0, Math.min(12, refreshTokenHash.length())));
 
         return JwtIssue.builder()
                 .accessToken(accessToken)

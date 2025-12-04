@@ -7,9 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -46,11 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // Check if token is revoked via Redis
                 String jti = jwt.getClaimAsString("jti");
                 if (jti != null && redisRevocationService.isRevoked(jti)) {
-                    // reject request as unauthorized
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().write("{\"error\":\"Token revoked\"}");
-                    response.setContentType("application/json");
-                    return;
+                    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "token_revoked");
                 }
                 
                 // Extract username and authenticate

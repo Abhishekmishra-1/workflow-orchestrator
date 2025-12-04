@@ -10,10 +10,12 @@ import com.authservice.security.JwtService;
 import com.authservice.security.RedisRevocationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.Map;
@@ -64,7 +66,7 @@ public class RefreshController {
 
         // Get username from user ID
         User user = userRepository.findById(refreshToken.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         String username = user.getUsername();
 
         // Issue new tokens (optionally rotate refresh token)
