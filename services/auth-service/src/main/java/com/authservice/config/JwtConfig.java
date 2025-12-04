@@ -1,5 +1,6 @@
-package com.authservice.security;
+package com.authservice.config;
 
+import com.authservice.security.PemUtils;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;

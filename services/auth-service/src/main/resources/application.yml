@@ -36,6 +36,21 @@ jwt:
   secret: ${JWT_SECRET:default_jwt_secret_change_me_use_profile_dev_or_prod}
   expiration: ${JWT_EXPIRATION:86400000}  # 24 hours in milliseconds
 
+# Actuator configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
+  health:
+    redis:
+      enabled: true
+    db:
+      enabled: true
+
 # Logging defaults
 logging:
   level:

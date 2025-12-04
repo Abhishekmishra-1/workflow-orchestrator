@@ -1,5 +1,7 @@
-package com.authservice.security;
+package com.authservice.config;
 
+import com.authservice.security.CustomUserDetailsService;
+import com.authservice.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,3 +47,4 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 }
+

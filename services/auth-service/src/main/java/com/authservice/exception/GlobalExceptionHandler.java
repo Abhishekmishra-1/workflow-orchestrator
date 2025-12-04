@@ -1,4 +1,4 @@
-package com.authservice.controller;
+package com.authservice.exception;
 
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;

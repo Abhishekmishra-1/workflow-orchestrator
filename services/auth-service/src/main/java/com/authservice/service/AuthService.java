@@ -18,7 +18,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public LoginResponse login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request, String deviceInfo, String ipAddress) {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
 
@@ -26,8 +26,8 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
         }
 
-        // Issue both access and refresh tokens
-        JwtIssue jwtIssue = jwtService.issueTokens(user.getUsername());
+        // Issue both access and refresh tokens with session info
+        JwtIssue jwtIssue = jwtService.issueTokens(user.getUsername(), deviceInfo, ipAddress);
         
         return LoginResponse.builder()
                 .token(jwtIssue.getAccessToken()) // For backward compatibility

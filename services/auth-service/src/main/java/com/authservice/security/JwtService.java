@@ -47,10 +47,12 @@ public class JwtService {
      * Issue both access and refresh tokens for a user.
      *
      * @param username the username
+     * @param deviceInfo optional device information
+     * @param ipAddress optional IP address
      * @return JwtIssue containing both tokens and expiry info
      */
     @Transactional
-    public JwtIssue issueTokens(String username) {
+    public JwtIssue issueTokens(String username, String deviceInfo, String ipAddress) {
         // Generate access token with jti claim
         String jti = UUID.randomUUID().toString();
         Instant now = Instant.now();
@@ -76,18 +78,23 @@ public class JwtService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
-        // Store refresh token in database
+        // Store refresh token in database with session info
         RefreshToken refreshToken = RefreshToken.builder()
                 .tokenHash(refreshTokenHash)
                 .userId(user.getId())
                 .issuedAt(now)
                 .expiresAt(refreshTokenExpiry)
                 .revoked(false)
+                .deviceInfo(deviceInfo)
+                .ipAddress(ipAddress)
+                .lastUsedAt(now)
                 .build();
 
         refreshTokenRepository.save(refreshToken);
 
-        log.info("Issued tokens for user={} jti={} refreshHashPrefix={}", user.getId(), jti, refreshTokenHash.substring(0, Math.min(12, refreshTokenHash.length())));
+        log.info("Issued tokens for user={} jti={} sessionId={} refreshHashPrefix={}", 
+                user.getId(), jti, refreshToken.getSessionId(), 
+                refreshTokenHash.substring(0, Math.min(12, refreshTokenHash.length())));
 
         return JwtIssue.builder()
                 .accessToken(accessToken)
@@ -95,6 +102,17 @@ public class JwtService {
                 .accessTokenExpiresIn(accessTokenExpiryMs)
                 .refreshTokenExpiresIn(refreshTokenExpiryMs)
                 .build();
+    }
+
+    /**
+     * Issue both access and refresh tokens for a user (backward compatibility).
+     *
+     * @param username the username
+     * @return JwtIssue containing both tokens and expiry info
+     */
+    @Transactional
+    public JwtIssue issueTokens(String username) {
+        return issueTokens(username, null, null);
     }
 
     /**

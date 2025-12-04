@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(name = "refresh_token", indexes = {
     @Index(name = "idx_user_id", columnList = "user_id"),
     @Index(name = "idx_token_hash", columnList = "token_hash"),
-    @Index(name = "idx_expires_at", columnList = "expires_at")
+    @Index(name = "idx_expires_at", columnList = "expires_at"),
+    @Index(name = "idx_session_id", columnList = "session_id")
 })
 @Getter
 @Setter
@@ -37,5 +39,18 @@ public class RefreshToken {
     @Column(nullable = false)
     @Builder.Default
     private Boolean revoked = false;
+
+    @Column(nullable = false, unique = true, length = 36)
+    @Builder.Default
+    private String sessionId = UUID.randomUUID().toString();
+
+    @Column(length = 500)
+    private String deviceInfo;
+
+    @Column(length = 45)
+    private String ipAddress;
+
+    @Column
+    private Instant lastUsedAt;
 }
 
