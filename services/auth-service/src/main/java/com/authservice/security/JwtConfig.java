@@ -25,7 +25,6 @@ import java.security.interfaces.RSAPublicKey;
 @Configuration
 public class JwtConfig {
 
-    private final PemUtils pemUtils;
     private final RSAPrivateKey privateKey;
     private final RSAPublicKey publicKey;
 
@@ -34,7 +33,6 @@ public class JwtConfig {
             @Value("${jwt.private-key-file}") Resource privateKeyResource,
             @Value("${jwt.public-key-file}") Resource publicKeyResource
     ) throws Exception {
-        this.pemUtils = pemUtils;
         this.privateKey = pemUtils.parsePrivateKey(privateKeyResource);
         this.publicKey = pemUtils.parsePublicKey(publicKeyResource);
     }
@@ -61,13 +59,14 @@ public class JwtConfig {
 
     /**
      * JWK Set for JWKS endpoint (if needed for OAuth2 resource servers).
+     * Only exposes the public key - private key is kept internal.
      */
     @Bean
     public JWKSet jwkSet() {
-        JWK jwk = new RSAKey.Builder(publicKey)
-                .privateKey(privateKey)
+        RSAKey publicJwk = new RSAKey.Builder(publicKey)
+                .keyID("auth-service-key-1")
                 .build();
-        return new JWKSet(jwk);
+        return new JWKSet(publicJwk);
     }
 }
 

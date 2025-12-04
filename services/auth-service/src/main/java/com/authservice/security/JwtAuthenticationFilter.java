@@ -46,8 +46,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // Check if token is revoked via Redis
                 String jti = jwt.getClaimAsString("jti");
                 if (jti != null && redisRevocationService.isRevoked(jti)) {
-                    // Token is revoked, do not authenticate
-                    filterChain.doFilter(request, response);
+                    // reject request as unauthorized
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("{\"error\":\"Token revoked\"}");
+                    response.setContentType("application/json");
                     return;
                 }
                 

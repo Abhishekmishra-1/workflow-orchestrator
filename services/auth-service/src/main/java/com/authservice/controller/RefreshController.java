@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -38,7 +39,7 @@ public class RefreshController {
      */
     @PostMapping("/refresh")
     @Transactional
-    public ResponseEntity<JwtIssue> refresh(@Valid @RequestBody RefreshRequest request) {
+    public ResponseEntity<?> refresh(@Valid @RequestBody RefreshRequest request) {
         String refreshTokenValue = request.getRefreshToken();
         String refreshTokenHash = hashUtils.sha256(refreshTokenValue);
 
@@ -46,19 +47,19 @@ public class RefreshController {
         Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findByTokenHash(refreshTokenHash);
 
         if (refreshTokenOpt.isEmpty()) {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(401).body(Map.of("error", "invalid_refresh_token"));
         }
 
         RefreshToken refreshToken = refreshTokenOpt.get();
 
         // Check if revoked
         if (refreshToken.getRevoked()) {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(401).body(Map.of("error", "invalid_refresh_token"));
         }
 
         // Check if expired
         if (refreshToken.getExpiresAt().isBefore(Instant.now())) {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(401).body(Map.of("error", "invalid_refresh_token"));
         }
 
         // Get username from user ID

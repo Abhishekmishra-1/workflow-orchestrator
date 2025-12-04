@@ -55,6 +55,8 @@ application-secrets.yml
 *.pem
 *.crt
 *.cer
+# Explicitly ignore private key in keys directory
+/services/auth-service/src/main/resources/keys/private.pem
 
 # Logs (may contain sensitive data)
 *.log

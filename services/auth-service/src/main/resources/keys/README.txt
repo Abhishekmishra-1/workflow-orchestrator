@@ -6,7 +6,8 @@ SECURITY WARNINGS:
 ==================
 1. DO NOT commit private.pem to version control in production
 2. DO NOT use these keys in production environments
-3. In production, store keys in:
+3. Dev-only keys may be present in classpath for local testing. DO NOT store private keys in git for production. Use Vault or K8s secrets. If private.pem exists in repo, rotate immediately.
+4. In production, store keys in:
    - HashiCorp Vault
    - Kubernetes Secrets
    - AWS Secrets Manager / Azure Key Vault
