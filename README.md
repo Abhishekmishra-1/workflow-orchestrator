@@ -225,7 +225,7 @@ cd services/user-service
 **Windows PowerShell:**
 ```powershell
 # Load environment variables
-Get-Content ..\..\..env | ForEach-Object {
+Get-Content ..\..\.env | ForEach-Object {
   $kv = $_ -split '=', 2
   if ($kv.Length -eq 2) { 
     $envName = $kv[0].Trim()
