@@ -1,0 +1,21 @@
+# local env files
+.env
+.env.*
+*.env
+
+# IntelliJ and build
+/.idea/
+/target/
+/out/
+
+# local override configs and secrets
+src/main/resources/application-*.yml
+src/main/resources/application-local.yml
+*.log
+*.keystore
+*.jks
+secrets/
+
+# dev keys (do not commit private key in production)
+/services/auth-service/src/main/resources/keys/private.pem
+

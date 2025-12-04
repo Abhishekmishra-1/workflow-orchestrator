@@ -1,0 +1,71 @@
+# Production profile configuration
+# ALL sensitive values MUST be provided via environment variables
+# DO NOT commit any secrets or passwords to version control
+
+server:
+  port: ${SERVER_PORT:8081}
+
+spring:
+  datasource:
+    # Production database connection - REQUIRED environment variables
+    # Example: export DB_URL=jdbc:mysql://prod-db-host:3306/authdb?useSSL=true&requireSSL=true
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      # Production connection pool settings
+      maximum-pool-size: ${DB_POOL_MAX:20}
+      minimum-idle: ${DB_POOL_MIN_IDLE:5}
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      # Validate schema in production - never auto-update
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        # Production JPA settings
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: false
+    # Strict migration ordering in production
+    out-of-order: false
+    # Validate migrations on startup
+    validate-on-migrate: true
+
+# JWT Configuration
+jwt:
+  # REQUIRED: Set JWT_SECRET environment variable with a strong, random key
+  # Recommended: Use at least 256 bits (32 bytes) of random data
+  # Example: export JWT_SECRET=$(openssl rand -base64 32)
+  # 
+  # PRODUCTION BEST PRACTICES:
+  # 1. Use RS256 algorithm instead of HS256 for better security
+  # 2. Store JWT secret in a secrets management system (AWS Secrets Manager, HashiCorp Vault, etc.)
+  # 3. Rotate JWT secrets regularly
+  # 4. Use different secrets for different environments
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:86400000}  # 24 hours in milliseconds
+
+# Production logging
+logging:
+  level:
+    root: WARN
+    com.authservice: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: ${LOG_FILE_PATH:/var/log/auth-service/application.log}
+    max-size: 10MB
+    max-history: 30
+

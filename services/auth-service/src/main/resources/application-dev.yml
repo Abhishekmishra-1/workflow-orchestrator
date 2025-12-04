@@ -1,0 +1,47 @@
+# Development profile configuration
+# Uses environment variables with developer-friendly defaults for local development
+
+server:
+  port: 8081
+
+spring:
+  datasource:
+    # Use environment variables from .env file (fallback defaults for convenience)
+    url: ${DB_URL:jdbc:mysql://localhost:3306/authdb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      # Update schema automatically in dev (convenient for development)
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    # Allow Flyway to run even if migrations are out of order in dev
+    out-of-order: true
+
+  # Redis Configuration for token revocation
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+# JWT Configuration (RSA-based RS256)
+jwt:
+  # RSA key files for local development (classpath keys)
+  # IMPORTANT: In production, do NOT use classpath keys
+  # Use secrets manager (Vault/K8s secrets) and set to file:/path/to/secret or env var
+  private-key-file: classpath:keys/private.pem
+  public-key-file: classpath:keys/public.pem
+  # Token expiry times
+  access-token-expiry-ms: ${JWT_ACCESS_EXPIRY_MS:300000}  # 5 minutes (300000 ms)
+  refresh-token-expiry-ms: ${JWT_REFRESH_EXPIRY_MS:1209600000}  # 14 days (1209600000 ms)
+

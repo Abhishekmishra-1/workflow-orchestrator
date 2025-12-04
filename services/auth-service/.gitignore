@@ -1,0 +1,67 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Secrets and Sensitive Files ###
+# Environment variable files
+.env
+.env.local
+.env.*.local
+*.env
+
+# Configuration files with secrets
+application-local.yml
+application-secrets.yml
+*-secrets.yml
+*-local.yml
+
+# Keystores and certificates
+*.jks
+*.keystore
+*.truststore
+*.p12
+*.pfx
+*.key
+*.pem
+*.crt
+*.cer
+
+# Logs (may contain sensitive data)
+*.log
+logs/
+
+# IDE specific secret files
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries/
+.idea/shelf/
